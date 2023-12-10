@@ -10,10 +10,7 @@ const currentYear = ref<number>(new Date().getFullYear());
       <v-row justify="center">
         <v-col class="text-center">
           Coop Connect, {{ currentYear }} | Desenvolvido por
-          <a href="https://github.com/anybuss" target="_blank">
-            Any Buss
-            <v-icon icon="mdi-heart"></v-icon>
-          </a>
+          <a href="https://github.com/anybuss" target="_blank"> Any Buss </a>
         </v-col>
       </v-row>
     </v-container>
