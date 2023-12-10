@@ -65,6 +65,38 @@ const birthdateOrFoundationDateRules = computed(() => [
   (value: string) =>
     birthdateOrFoundationDateValidator(value, formModel.value.userType),
 ]);
+
+const message = ref<string>("");
+const colorType = ref<string>("");
+const showSnackbar = ref<boolean>(false);
+const emitSubmitForm = async (formModel: FormModelType) => {
+  const { valid } = await formRef.value?.validate();
+
+  if (valid) {
+    emits("submit-form", formModel);
+    formRef.value.reset();
+  } else {
+    colorType.value = "error";
+    message.value = "Formulário inválido!";
+    showSnackbar.value = true;
+  }
+};
+
+watch(
+  () => formModel.value.userType,
+  () => {
+    formModel.value = {
+      ...formModel.value,
+      taxId: "",
+      birthdateOrFoundationDate: "",
+      incomeOrRevenue: "",
+    };
+
+    if (formRef.value) {
+      formRef.value.resetValidation();
+    }
+  }
+);
 </script>
 
 <template>
@@ -155,8 +187,19 @@ const birthdateOrFoundationDateRules = computed(() => [
 
     <v-row>
       <v-col cols="12" mg="8" lg="6">
-        <v-btn color="primary" block> Salvar </v-btn>
+        <v-btn color="primary" block @click="emitSubmitForm(formModel)">
+          Salvar
+        </v-btn>
       </v-col>
     </v-row>
   </v-form>
+
+  <v-snackbar
+    v-model="showSnackbar"
+    close-on-content-click
+    :timeout="1500"
+    :color="colorType"
+  >
+    {{ message }}
+  </v-snackbar>
 </template>
