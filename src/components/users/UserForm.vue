@@ -131,18 +131,23 @@ watch(
 
 <template>
   <v-form ref="formRef" @submit.prevent>
-    <v-row>
-      <v-col>
-        <v-radio-group v-model="formModel.userType" row inline>
-          <v-radio
-            label="Cadastro de Pessoa Física"
-            value="person"
-            class="mr-6"
-          ></v-radio>
-          <v-radio label="Cadastro de Pessoa Jurídica" value="entity"></v-radio>
-        </v-radio-group>
-      </v-col>
-    </v-row>
+    <template v-if="!isUserEdit">
+      <v-row>
+        <v-col>
+          <v-radio-group v-model="formModel.userType" row inline>
+            <v-radio
+              label="Cadastro de Pessoa Física"
+              value="person"
+              class="mr-6"
+            ></v-radio>
+            <v-radio
+              label="Cadastro de Pessoa Jurídica"
+              value="entity"
+            ></v-radio>
+          </v-radio-group>
+        </v-col>
+      </v-row>
+    </template>
 
     <v-row>
       <v-col cols="12" mg="8" lg="6">
