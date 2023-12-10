@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import AppFooter from "@/components/AppFooter.vue";
 import AppMenu from "@/components/AppMenu.vue";
 import { computed, ref } from "vue";
 import { useRoute, useRouter, type RouteRecordName } from "vue-router";
@@ -38,5 +39,6 @@ const toggleDrawer = () => {
     <v-main>
       <router-view />
     </v-main>
+    <AppFooter />
   </v-app>
 </template>

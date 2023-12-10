@@ -5,7 +5,7 @@ const currentYear = ref<number>(new Date().getFullYear());
 </script>
 
 <template>
-  <v-footer fixed elevation="2">
+  <v-footer app elevation="2">
     <v-container>
       <v-row justify="center">
         <v-col class="text-center">
