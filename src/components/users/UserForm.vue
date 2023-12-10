@@ -6,6 +6,10 @@ import {
 } from "@/utils/validators";
 import { computed, ref, type Ref, watch } from "vue";
 
+interface Props {
+  user?: UserModelType | null;
+}
+
 type FormModelType = {
   userType: "person" | "entity";
   fullName: string;
@@ -15,7 +19,19 @@ type FormModelType = {
   incomeOrRevenue: string;
 };
 
-const emits = defineEmits(["submit-form"]);
+type UserModelType = FormModelType & {
+  id: string;
+};
+
+const props = withDefaults(defineProps<Props>(), {
+  user: null,
+});
+
+const emits = defineEmits(["submit-form", "submit-edit"]);
+
+const isUserEdit = computed(() => {
+  return !!props.user;
+});
 
 const formRef = ref<any>(null);
 const formModel: Ref<FormModelType> = ref({
@@ -69,11 +85,15 @@ const birthdateOrFoundationDateRules = computed(() => [
 const message = ref<string>("");
 const colorType = ref<string>("");
 const showSnackbar = ref<boolean>(false);
-const emitSubmitForm = async (formModel: FormModelType) => {
-  const { valid } = await formRef.value?.validate();
 
+const emitSubmitForm = async () => {
+  const { valid } = await formRef.value?.validate();
   if (valid) {
-    emits("submit-form", formModel);
+    if (isUserEdit.value) {
+      emits("submit-edit", { ...formModel.value, id: props.user!.id });
+    } else {
+      emits("submit-form", formModel.value);
+    }
     formRef.value.reset();
   } else {
     colorType.value = "error";
@@ -81,6 +101,16 @@ const emitSubmitForm = async (formModel: FormModelType) => {
     showSnackbar.value = true;
   }
 };
+
+watch(
+  () => props.user,
+  (newUser) => {
+    if (newUser) {
+      formModel.value = { ...newUser };
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   () => formModel.value.userType,
@@ -154,6 +184,7 @@ watch(
           :hint="taxIdHint"
           required
           clearable
+          :disabled="isUserEdit"
         ></v-text-field>
       </v-col>
     </v-row>
@@ -187,9 +218,7 @@ watch(
 
     <v-row>
       <v-col cols="12" mg="8" lg="6">
-        <v-btn color="primary" block @click="emitSubmitForm(formModel)">
-          Salvar
-        </v-btn>
+        <v-btn color="primary" block @click="emitSubmitForm"> Salvar </v-btn>
       </v-col>
     </v-row>
   </v-form>
