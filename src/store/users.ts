@@ -13,5 +13,17 @@ type UserModel = {
   incomeOrRevenue: string;
 };
 export const useUsersStore = defineStore("users", () => {
-  //
+  const users: Ref<UserModel[]> = ref([]);
+
+  const addUser = (newUser: Omit<UserModel, "id">) => {
+    const userExists = users.value.some((user) => user.taxId === newUser.taxId);
+    if (userExists) {
+      throw new Error("User already exists.");
+    }
+
+    const userWithId = { ...newUser, id: uuidv4() };
+    users.value.push(userWithId);
+  };
+
+  return { users, addUser };
 });
