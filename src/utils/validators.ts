@@ -2,7 +2,7 @@ export function requiredFieldValidator(
   value: string,
   errorMessage: string
 ): boolean | string {
-  return value.trim().length > 0 ? true : errorMessage;
+  return value?.trim().length ? true : errorMessage;
 }
 
 export function taxIdValidator(
