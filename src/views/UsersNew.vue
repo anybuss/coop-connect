@@ -2,7 +2,9 @@
 import UserForm from "@/components/users/UserForm.vue";
 import { useUsersStore } from "@/store/users";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const usersStore = useUsersStore();
 
 const message = ref<string>("");
@@ -12,7 +14,10 @@ const showSnackbar = ref<boolean>(false);
 const handleSubmitForm = (formModel: any) => {
   try {
     usersStore.addUser(formModel);
-    message.value = "Usuário cadastrado com sucesso!";
+    setTimeout(() => {
+      router.push({ name: "users-show" });
+    }, 1500);
+    message.value = "Usuário cadastrado com sucesso! Você será redirecionado.";
     colorType.value = "success";
     showSnackbar.value = true;
   } catch (error: any) {
