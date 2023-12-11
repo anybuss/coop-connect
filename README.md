@@ -38,7 +38,7 @@ Antes de iniciar, é necessário ter instalado em sua máquina as seguintes ferr
 1. Clone o repositório
 
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
+   git clone https://github.com/anybuss/coop-connect.git
    ```
 
 2. Entre na pasta do projeto
