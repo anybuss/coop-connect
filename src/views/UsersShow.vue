@@ -1,18 +1,42 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import UserForm from "@/components/users/UserForm.vue";
 import { useUsersStore } from "@/store/users";
 import {
+  prettifyCurrency,
+  prettifyDate,
   prettifyPhoneNumber,
   prettifyTaxId,
-  prettifyDate,
-  prettifyCurrency,
 } from "@/utils/prettifys";
+import { ref } from "vue";
 
-const { users } = useUsersStore();
+type UserModel = {
+  id: string;
+  userType: "person" | "entity";
+  fullName: string;
+  phone: string;
+  taxId: string;
+  birthdateOrFoundationDate: string;
+  incomeOrRevenue: string;
+};
+
+const store = useUsersStore();
+const { users, editUser, deleteUser } = store;
+
+const showEditModal = ref(false);
+const selectedUser = ref<UserModel | null>(null);
+
+const openEditUserForm = (user: UserModel) => {
+  selectedUser.value = user;
+  showEditModal.value = true;
+};
 
 const headers = [
   { title: "Nome", value: "fullName", sortable: true },
-  { title: "Tipo de Cadastro", value: "userType", sortable: true },
+  {
+    title: "Tipo de Cadastro",
+    value: "userType",
+    sortable: true,
+  },
   { title: "Documento", value: "taxId", sortable: true },
   { title: "Telefone", value: "phone", sortable: true },
   {
@@ -27,6 +51,38 @@ const headers = [
   },
   { title: "Ações", value: "id", sortable: false },
 ];
+
+const message = ref<string>("");
+const colorType = ref<string>("");
+const showSnackbar = ref<boolean>(false);
+const handleSubmitEdit = (formModel: any) => {
+  try {
+    editUser(formModel.id, formModel);
+    message.value = "Usuário editado com sucesso!";
+    colorType.value = "success";
+  } catch (error: any) {
+    message.value = "Erro ao editar usuário!";
+    colorType.value = "error";
+    console.error(error.message);
+  } finally {
+    showSnackbar.value = true;
+    showEditModal.value = false;
+  }
+};
+
+const handleDeleteUser = (id: string) => {
+  try {
+    deleteUser(id);
+    message.value = "Usuário deletado com sucesso!";
+    colorType.value = "success";
+  } catch (error: any) {
+    message.value = "Erro ao deletar usuário!";
+    colorType.value = "error";
+    console.error(error.message);
+  } finally {
+    showSnackbar.value = true;
+  }
+};
 </script>
 
 <template>
@@ -54,6 +110,7 @@ const headers = [
         :items="users"
         :headers="headers"
         itemsPerPageText="Itens por página"
+        noDataText="Nenhum cooperado cadastrado"
       >
         <template #item.userType="{ item }">
           <span v-if="item.userType === 'person'">Pessoa Física</span>
@@ -73,13 +130,50 @@ const headers = [
         </template>
 
         <template #item.incomeOrRevenue="{ item }">
-          <div class="text-right">
-            {{ prettifyCurrency(item.incomeOrRevenue) }}
-          </div>
+          {{ prettifyCurrency(item.incomeOrRevenue) }}
         </template>
 
-        <template #item.id="{ item }"> </template>
+        <template #item.id="{ item }">
+          <v-row class="d-flex flex-nowrap">
+            <v-btn
+              size="x-small"
+              icon="mdi-pencil"
+              color="primary"
+              variant="tonal"
+              class="mr-2"
+              @click="openEditUserForm(item)"
+            ></v-btn>
+            <v-btn
+              size="x-small"
+              icon="mdi-delete"
+              color="error"
+              variant="tonal"
+              @click="handleDeleteUser(item.id)"
+            ></v-btn>
+          </v-row>
+        </template>
       </v-data-table>
     </v-container>
+
+    <v-dialog v-model="showEditModal" width="800">
+      <v-card>
+        <v-container>
+          <h1 class="text-h4">Editar Cooperado</h1>
+          <p class="text-subtitle-1">O campo CPF/CNPJ não pode ser alterado.</p>
+        </v-container>
+
+        <v-container>
+          <UserForm :user="selectedUser" @submit-edit="handleSubmitEdit" />
+        </v-container>
+        <v-snackbar
+          close-on-content-click
+          :timeout="1500"
+          :color="colorType"
+          v-model="showSnackbar"
+        >
+          {{ message }}
+        </v-snackbar>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>

@@ -18,12 +18,28 @@ export const useUsersStore = defineStore("users", () => {
   const addUser = (newUser: Omit<UserModel, "id">) => {
     const userExists = users.value.some((user) => user.taxId === newUser.taxId);
     if (userExists) {
-      throw new Error("User already exists.");
+      throw new Error("Usuário já cadastrado.");
     }
 
     const userWithId = { ...newUser, id: uuidv4() };
     users.value.push(userWithId);
   };
 
-  return { users, addUser };
+  const editUser = (id: string, updatedData: Omit<UserModel, "id">) => {
+    const userIndex = users.value.findIndex((user) => user.id === id);
+    if (userIndex === -1) {
+      throw new Error("Usuário não encontrado.");
+    }
+
+    users.value[userIndex] = { ...users.value[userIndex], ...updatedData };
+  };
+
+  const deleteUser = (id: string) => {
+    const userIndex = users.value.findIndex((user) => user.id === id);
+    if (userIndex === -1) throw new Error("Usuário não encontrado.");
+
+    users.value.splice(userIndex, 1);
+  };
+
+  return { users, addUser, editUser, deleteUser };
 });
