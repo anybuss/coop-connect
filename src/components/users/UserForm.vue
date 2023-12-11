@@ -130,110 +130,114 @@ watch(
 </script>
 
 <template>
-  <v-form ref="formRef" @submit.prevent>
-    <template v-if="!isUserEdit">
-      <v-row>
-        <v-col>
-          <v-radio-group v-model="formModel.userType" row inline>
-            <v-radio
-              label="Cadastro de Pessoa Física"
-              value="person"
-              class="mr-6"
-            ></v-radio>
-            <v-radio
-              label="Cadastro de Pessoa Jurídica"
-              value="entity"
-            ></v-radio>
-          </v-radio-group>
+  <v-container fluid>
+    <v-form ref="formRef" @submit.prevent>
+      <template v-if="!isUserEdit">
+        <v-row>
+          <v-col>
+            <v-radio-group v-model="formModel.userType" row inline>
+              <v-radio
+                label="Cadastro de Pessoa Física"
+                value="person"
+                class="mr-6"
+              ></v-radio>
+              <v-radio
+                label="Cadastro de Pessoa Jurídica"
+                value="entity"
+              ></v-radio>
+            </v-radio-group>
+          </v-col>
+        </v-row>
+      </template>
+
+      <v-row justify="center">
+        <v-col cols="12">
+          <v-text-field
+            v-model="formModel.fullName"
+            :rules="fullNameRules"
+            label="Nome"
+            type="text"
+            prepend-icon="mdi-account"
+            required
+            clearable
+          ></v-text-field>
         </v-col>
       </v-row>
-    </template>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-text-field
-          v-model="formModel.fullName"
-          :rules="fullNameRules"
-          label="Nome"
-          type="text"
-          prepend-icon="mdi-account"
-          required
-          clearable
-        ></v-text-field>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="formModel.phone"
+            label="Telefone"
+            type="tel"
+            prepend-icon="mdi-phone"
+            clearable
+            :counter="11"
+            hint="Exemplo: XX123456789"
+          ></v-text-field>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-text-field
-          v-model="formModel.phone"
-          label="Telefone"
-          type="tel"
-          prepend-icon="mdi-phone"
-          clearable
-          :counter="11"
-          hint="Exemplo: XX123456789"
-        ></v-text-field>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="formModel.taxId"
+            :rules="taxIdRules"
+            :label="taxIdLabel"
+            type="text"
+            prepend-icon="mdi-card-account-details"
+            :counter="taxIdCounter"
+            :hint="taxIdHint"
+            required
+            clearable
+            :disabled="isUserEdit"
+          ></v-text-field>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-text-field
-          v-model="formModel.taxId"
-          :rules="taxIdRules"
-          :label="taxIdLabel"
-          type="text"
-          prepend-icon="mdi-card-account-details"
-          :counter="taxIdCounter"
-          :hint="taxIdHint"
-          required
-          clearable
-          :disabled="isUserEdit"
-        ></v-text-field>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="formModel.birthdateOrFoundationDate"
+            :rules="birthdateOrFoundationDateRules"
+            :label="birthdateOrFoundationDateLabel"
+            type="date"
+            prepend-icon="mdi-calendar"
+            required
+          ></v-text-field>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-text-field
-          v-model="formModel.birthdateOrFoundationDate"
-          :rules="birthdateOrFoundationDateRules"
-          :label="birthdateOrFoundationDateLabel"
-          type="date"
-          prepend-icon="mdi-calendar"
-          required
-        ></v-text-field>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-text-field
+            v-model="formModel.incomeOrRevenue"
+            :label="incomeOrRevenueLabel"
+            type="number"
+            prepend-icon="mdi-cash-multiple"
+            prefix="R$"
+            hide-spin-buttons
+            clearable
+          ></v-text-field>
+        </v-col>
+      </v-row>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-text-field
-          v-model="formModel.incomeOrRevenue"
-          :label="incomeOrRevenueLabel"
-          type="number"
-          prepend-icon="mdi-cash-multiple"
-          prefix="R$"
-          hide-spin-buttons
-          clearable
-        ></v-text-field>
-      </v-col>
-    </v-row>
+      <v-row>
+        <v-col cols="12">
+          <v-btn color="primary" block @click="emitSubmitForm">
+            {{ isUserEdit ? "Atualizar" : "Salvar" }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
 
-    <v-row>
-      <v-col cols="12" mg="8" lg="6">
-        <v-btn color="primary" block @click="emitSubmitForm"> Salvar </v-btn>
-      </v-col>
-    </v-row>
-  </v-form>
-
-  <v-snackbar
-    v-model="showSnackbar"
-    close-on-content-click
-    :timeout="1500"
-    :color="colorType"
-  >
-    {{ message }}
-  </v-snackbar>
+    <v-snackbar
+      v-model="showSnackbar"
+      close-on-content-click
+      :timeout="2000"
+      :color="colorType"
+    >
+      {{ message }}
+    </v-snackbar>
+  </v-container>
 </template>

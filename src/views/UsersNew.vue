@@ -16,7 +16,7 @@ const handleSubmitForm = (formModel: any) => {
     usersStore.addUser(formModel);
     setTimeout(() => {
       router.push({ name: "users-show" });
-    }, 1500);
+    }, 2000);
     message.value = "Usuário cadastrado com sucesso! Você será redirecionado.";
     colorType.value = "success";
   } catch (error: any) {
@@ -30,29 +30,23 @@ const handleSubmitForm = (formModel: any) => {
 </script>
 
 <template>
-  <v-container>
+  <v-container class="w-75">
     <v-container>
-      <v-row>
-        <v-col cols="12">
-          <h1 class="text-h4">Cadastro de Cooperado</h1>
-          <p class="text-subtitle-1">
-            Para cadastrar preencha o formulário abaixo.
-          </p>
-        </v-col>
-      </v-row>
+      <h1 class="text-h4">Cadastro de Cooperado</h1>
+      <p class="text-subtitle-3">
+        Para cadastrar preencha o formulário abaixo.
+      </p>
     </v-container>
 
-    <v-container>
-      <UserForm @submit-form="handleSubmitForm" />
+    <UserForm @submit-form="handleSubmitForm" />
 
-      <v-snackbar
-        close-on-content-click
-        :timeout="1500"
-        :color="colorType"
-        v-model="showSnackbar"
-      >
-        {{ message }}
-      </v-snackbar>
-    </v-container>
+    <v-snackbar
+      close-on-content-click
+      :timeout="1500"
+      :color="colorType"
+      v-model="showSnackbar"
+    >
+      {{ message }}
+    </v-snackbar>
   </v-container>
 </template>
