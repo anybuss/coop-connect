@@ -30,29 +30,26 @@ const openEditUserForm = (user: UserModel) => {
   showEditModal.value = true;
 };
 
-const headers: any = [
-  { title: "Nome", value: "fullName", sortable: true, align: "left" },
+const headers = [
+  { title: "Nome", value: "fullName", sortable: true },
   {
     title: "Tipo de Cadastro",
     value: "userType",
     sortable: true,
-    align: "left",
   },
-  { title: "Documento", value: "taxId", sortable: true, align: "left" },
-  { title: "Telefone", value: "phone", sortable: true, align: "left" },
+  { title: "Documento", value: "taxId", sortable: true },
+  { title: "Telefone", value: "phone", sortable: true },
   {
     title: "Data de Nascimento/Constituição",
     value: "birthdateOrFoundationDate",
     sortable: true,
-    align: "left",
   },
   {
     title: "Renda/Faturamento",
     value: "incomeOrRevenue",
     sortable: true,
-    align: "right",
   },
-  { title: "Ações", value: "id", sortable: false, align: "left" },
+  { title: "Ações", value: "id", sortable: false },
 ];
 
 const message = ref<string>("");
@@ -113,6 +110,7 @@ const handleDeleteUser = (id: string) => {
         :items="users"
         :headers="headers"
         itemsPerPageText="Itens por página"
+        noDataText="Nenhum cooperado cadastrado"
       >
         <template #item.userType="{ item }">
           <span v-if="item.userType === 'person'">Pessoa Física</span>
@@ -132,9 +130,7 @@ const handleDeleteUser = (id: string) => {
         </template>
 
         <template #item.incomeOrRevenue="{ item }">
-          <div class="text-right">
-            {{ prettifyCurrency(item.incomeOrRevenue) }}
-          </div>
+          {{ prettifyCurrency(item.incomeOrRevenue) }}
         </template>
 
         <template #item.id="{ item }">
