@@ -19,12 +19,12 @@ const handleSubmitForm = (formModel: any) => {
     }, 1500);
     message.value = "Usuário cadastrado com sucesso! Você será redirecionado.";
     colorType.value = "success";
-    showSnackbar.value = true;
   } catch (error: any) {
     message.value = "Erro ao cadastrar usuário! (Usuário já cadastrado)";
     colorType.value = "error";
-    showSnackbar.value = true;
     console.error(error.message);
+  } finally {
+    showSnackbar.value = true;
   }
 };
 </script>

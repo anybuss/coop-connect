@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import UserForm from "@/components/users/UserForm.vue";
 import { useUsersStore } from "@/store/users";
 import {
+  prettifyCurrency,
+  prettifyDate,
   prettifyPhoneNumber,
   prettifyTaxId,
-  prettifyDate,
-  prettifyCurrency,
 } from "@/utils/prettifys";
-import UserForm from "@/components/users/UserForm.vue";
+import { ref } from "vue";
 
 type UserModel = {
   id: string;
@@ -19,7 +19,8 @@ type UserModel = {
   incomeOrRevenue: string;
 };
 
-const { users, editUser } = useUsersStore();
+const store = useUsersStore();
+const { users, editUser, deleteUser } = store;
 
 const showEditModal = ref(false);
 const selectedUser = ref<UserModel | null>(null);
@@ -29,23 +30,29 @@ const openEditUserForm = (user: UserModel) => {
   showEditModal.value = true;
 };
 
-const headers = [
-  { title: "Nome", value: "fullName", sortable: true },
-  { title: "Tipo de Cadastro", value: "userType", sortable: true },
-  { title: "Documento", value: "taxId", sortable: true },
-  { title: "Telefone", value: "phone", sortable: true },
+const headers: any = [
+  { title: "Nome", value: "fullName", sortable: true, align: "left" },
+  {
+    title: "Tipo de Cadastro",
+    value: "userType",
+    sortable: true,
+    align: "left",
+  },
+  { title: "Documento", value: "taxId", sortable: true, align: "left" },
+  { title: "Telefone", value: "phone", sortable: true, align: "left" },
   {
     title: "Data de Nascimento/Constituição",
     value: "birthdateOrFoundationDate",
     sortable: true,
+    align: "left",
   },
   {
     title: "Renda/Faturamento",
     value: "incomeOrRevenue",
     sortable: true,
-    align: "end",
+    align: "right",
   },
-  { title: "Ações", value: "id", sortable: false },
+  { title: "Ações", value: "id", sortable: false, align: "left" },
 ];
 
 const message = ref<string>("");
@@ -56,13 +63,27 @@ const handleSubmitEdit = (formModel: any) => {
     editUser(formModel.id, formModel);
     message.value = "Usuário editado com sucesso!";
     colorType.value = "success";
-    showSnackbar.value = true;
-    showEditModal.value = false;
   } catch (error: any) {
     message.value = "Erro ao editar usuário!";
     colorType.value = "error";
-    showSnackbar.value = true;
     console.error(error.message);
+  } finally {
+    showSnackbar.value = true;
+    showEditModal.value = false;
+  }
+};
+
+const handleDeleteUser = (id: string) => {
+  try {
+    deleteUser(id);
+    message.value = "Usuário deletado com sucesso!";
+    colorType.value = "success";
+  } catch (error: any) {
+    message.value = "Erro ao deletar usuário!";
+    colorType.value = "error";
+    console.error(error.message);
+  } finally {
+    showSnackbar.value = true;
   }
 };
 </script>
@@ -126,6 +147,13 @@ const handleSubmitEdit = (formModel: any) => {
               class="mr-2"
               @click="openEditUserForm(item)"
             ></v-btn>
+            <v-btn
+              size="x-small"
+              icon="mdi-delete"
+              color="error"
+              variant="tonal"
+              @click="handleDeleteUser(item.id)"
+            ></v-btn>
           </v-row>
         </template>
       </v-data-table>
@@ -137,18 +165,18 @@ const handleSubmitEdit = (formModel: any) => {
           <h1 class="text-h4">Editar Cooperado</h1>
           <p class="text-subtitle-1">O campo CPF/CNPJ não pode ser alterado.</p>
         </v-container>
+
         <v-container>
           <UserForm :user="selectedUser" @submit-edit="handleSubmitEdit" />
-
-          <v-snackbar
-            close-on-content-click
-            :timeout="1500"
-            :color="colorType"
-            v-model="showSnackbar"
-          >
-            {{ message }}
-          </v-snackbar>
         </v-container>
+        <v-snackbar
+          close-on-content-click
+          :timeout="1500"
+          :color="colorType"
+          v-model="showSnackbar"
+        >
+          {{ message }}
+        </v-snackbar>
       </v-card>
     </v-dialog>
   </v-container>

@@ -34,5 +34,12 @@ export const useUsersStore = defineStore("users", () => {
     users.value[userIndex] = { ...users.value[userIndex], ...updatedData };
   };
 
-  return { users, addUser, editUser };
+  const deleteUser = (id: string) => {
+    const userIndex = users.value.findIndex((user) => user.id === id);
+    if (userIndex === -1) throw new Error("Usuário não encontrado.");
+
+    users.value.splice(userIndex, 1);
+  };
+
+  return { users, addUser, editUser, deleteUser };
 });
