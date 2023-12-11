@@ -86,16 +86,12 @@ const handleDeleteUser = (id: string) => {
 </script>
 
 <template>
-  <v-container>
+  <v-container class="w-80">
     <v-container>
-      <v-row>
-        <v-col cols="12">
-          <h1 class="text-h4">Visualização de Cooperado</h1>
-          <p class="text-subtitle-1">
-            Você pode visualizar, editar e deletar cooperados na tabela abaixo.
-          </p>
-        </v-col>
-      </v-row>
+      <h1 class="text-h4">Visualização de Cooperado</h1>
+      <p class="text-subtitle-3">
+        Você pode visualizar, editar e deletar cooperados na tabela abaixo.
+      </p>
     </v-container>
 
     <v-container>
@@ -157,23 +153,25 @@ const handleDeleteUser = (id: string) => {
 
     <v-dialog v-model="showEditModal" width="800">
       <v-card>
-        <v-container>
+        <v-container class="ma-2">
           <h1 class="text-h4">Editar Cooperado</h1>
-          <p class="text-subtitle-1">O campo CPF/CNPJ não pode ser alterado.</p>
+          <p class="text-subtitle-3">
+            * O campo CPF/CNPJ não pode ser alterado.
+          </p>
         </v-container>
 
         <v-container>
           <UserForm :user="selectedUser" @submit-edit="handleSubmitEdit" />
         </v-container>
-        <v-snackbar
-          close-on-content-click
-          :timeout="1500"
-          :color="colorType"
-          v-model="showSnackbar"
-        >
-          {{ message }}
-        </v-snackbar>
       </v-card>
     </v-dialog>
+    <v-snackbar
+      close-on-content-click
+      :timeout="2000"
+      :color="colorType"
+      v-model="showSnackbar"
+    >
+      {{ message }}
+    </v-snackbar>
   </v-container>
 </template>
