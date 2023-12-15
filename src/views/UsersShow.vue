@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import UserForm from "@/components/users/UserForm.vue";
 import { useUsersStore } from "@/store/users";
+import { UserEntity } from "@/types/users";
 import {
   prettifyCurrency,
   prettifyDate,
@@ -9,23 +10,13 @@ import {
 } from "@/utils/prettifys";
 import { ref } from "vue";
 
-type UserModel = {
-  id: string;
-  userType: "person" | "entity";
-  fullName: string;
-  phone: string;
-  taxId: string;
-  birthdateOrFoundationDate: string;
-  incomeOrRevenue: string;
-};
-
 const store = useUsersStore();
 const { users, editUser, deleteUser } = store;
 
 const showEditModal = ref(false);
-const selectedUser = ref<UserModel | null>(null);
+const selectedUser = ref<UserEntity | null>(null);
 
-const openEditUserForm = (user: UserModel) => {
+const openEditUserForm = (user: UserEntity) => {
   selectedUser.value = user;
   showEditModal.value = true;
 };
