@@ -62,7 +62,13 @@ Antes de iniciar, é necessário ter instalado em sua máquina as seguintes ferr
    ou
 
    ```bash
-   npm run build && preview
+   npm run build
+   ```
+
+   e
+
+   ```bash
+   npm run preview
    ```
 
 5. Abra a aplicação na porta `http://localhost:3000/`
