@@ -1,27 +1,19 @@
 <script lang="ts" setup>
+import { useNotification } from "@/composables/useNotification";
 import {
   birthdateOrFoundationDateValidator,
   requiredFieldValidator,
   taxIdValidator,
 } from "@/utils/validators";
-import { computed, ref, type Ref, watch } from "vue";
+import { computed, nextTick, ref, watch, type Ref } from "vue";
+import AppNotification from "../AppNotification.vue";
+import { UserCreationType, UserEntity } from "@/types/users";
 
 interface Props {
-  user?: UserModelType | null;
+  user?: UserEntity | null;
 }
 
-type FormModelType = {
-  userType: "person" | "entity";
-  fullName: string;
-  phone: string;
-  taxId: string;
-  birthdateOrFoundationDate: string;
-  incomeOrRevenue: string;
-};
-
-type UserModelType = FormModelType & {
-  id: string;
-};
+const { showMessage, message, colorType, showNotification } = useNotification();
 
 const props = withDefaults(defineProps<Props>(), {
   user: null,
@@ -34,7 +26,7 @@ const isUserEdit = computed(() => {
 });
 
 const formRef = ref<any>(null);
-const formModel: Ref<FormModelType> = ref({
+const formModel: Ref<UserCreationType> = ref({
   userType: "person",
   fullName: "",
   phone: "",
@@ -82,10 +74,6 @@ const birthdateOrFoundationDateRules = computed(() => [
     birthdateOrFoundationDateValidator(value, formModel.value.userType),
 ]);
 
-const message = ref<string>("");
-const colorType = ref<string>("");
-const showSnackbar = ref<boolean>(false);
-
 const emitSubmitForm = async () => {
   const { valid } = await formRef.value?.validate();
   if (valid) {
@@ -94,11 +82,20 @@ const emitSubmitForm = async () => {
     } else {
       emits("submit-form", formModel.value);
     }
-    formRef.value.reset();
+
+    formModel.value = {
+      userType: formModel.value.userType,
+      fullName: "",
+      phone: "",
+      taxId: "",
+      birthdateOrFoundationDate: "",
+      incomeOrRevenue: "",
+    };
+
+    await nextTick();
+    formRef.value.resetValidation();
   } else {
-    colorType.value = "error";
-    message.value = "Formulário inválido!";
-    showSnackbar.value = true;
+    showMessage("Formulário inválido!", "error");
   }
 };
 
@@ -231,13 +228,10 @@ watch(
       </v-row>
     </v-form>
 
-    <v-snackbar
-      v-model="showSnackbar"
-      close-on-content-click
-      :timeout="2000"
+    <AppNotification
+      :show="showNotification"
+      :message="message"
       :color="colorType"
-    >
-      {{ message }}
-    </v-snackbar>
+    />
   </v-container>
 </template>

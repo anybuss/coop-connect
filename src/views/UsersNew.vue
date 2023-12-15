@@ -1,30 +1,26 @@
 <script lang="ts" setup>
+import AppNotification from "@/components/AppNotification.vue";
 import UserForm from "@/components/users/UserForm.vue";
+import { useNotification } from "@/composables/useNotification";
 import { useUsersStore } from "@/store/users";
-import { ref } from "vue";
+import { UserCreationType } from "@/types/users";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const usersStore = useUsersStore();
+const { addUser } = useUsersStore();
+const { showMessage, message, colorType, showNotification } = useNotification();
 
-const message = ref<string>("");
-const colorType = ref<string>("");
-const showSnackbar = ref<boolean>(false);
-
-const handleSubmitForm = (formModel: any) => {
+const handleSubmitForm = async (formModel: UserCreationType) => {
   try {
-    usersStore.addUser(formModel);
-    setTimeout(() => {
-      router.push({ name: "users-show" });
-    }, 2000);
-    message.value = "Usuário cadastrado com sucesso! Você será redirecionado.";
-    colorType.value = "success";
-  } catch (error: any) {
-    message.value = "Erro ao cadastrar usuário! (Usuário já cadastrado)";
-    colorType.value = "error";
-    console.error(error.message);
-  } finally {
-    showSnackbar.value = true;
+    addUser(formModel);
+    showMessage("Cooperado cadastrado com sucesso!", "success");
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    router.push({ name: "users-show" });
+  } catch (error) {
+    showMessage(
+      "Erro ao cadastrar cooperado! (Cooperado já cadastrado)",
+      "error"
+    );
   }
 };
 </script>
@@ -39,14 +35,10 @@ const handleSubmitForm = (formModel: any) => {
     </v-container>
 
     <UserForm @submit-form="handleSubmitForm" />
-
-    <v-snackbar
-      close-on-content-click
-      :timeout="1500"
+    <AppNotification
+      :show="showNotification"
+      :message="message"
       :color="colorType"
-      v-model="showSnackbar"
-    >
-      {{ message }}
-    </v-snackbar>
+    />
   </v-container>
 </template>
