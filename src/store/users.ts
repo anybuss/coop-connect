@@ -1,21 +1,11 @@
+import { UserCreationType, UserEntity } from "@/types/users";
 import { defineStore } from "pinia";
 import { v4 as uuidv4 } from "uuid";
 import { ref, type Ref } from "vue";
-
-type UserType = "person" | "entity";
-type UserModel = {
-  id: string;
-  userType: UserType;
-  fullName: string;
-  phone: string;
-  taxId: string;
-  birthdateOrFoundationDate: string;
-  incomeOrRevenue: string;
-};
 export const useUsersStore = defineStore("users", () => {
-  const users: Ref<UserModel[]> = ref([]);
+  const users: Ref<UserEntity[]> = ref([]);
 
-  const addUser = (newUser: Omit<UserModel, "id">) => {
+  const addUser = (newUser: UserCreationType) => {
     const userExists = users.value.some((user) => user.taxId === newUser.taxId);
     if (userExists) {
       throw new Error("Usuário já cadastrado.");
@@ -25,7 +15,7 @@ export const useUsersStore = defineStore("users", () => {
     users.value.push(userWithId);
   };
 
-  const editUser = (id: string, updatedData: Omit<UserModel, "id">) => {
+  const editUser = (id: string, updatedData: UserCreationType) => {
     const userIndex = users.value.findIndex((user) => user.id === id);
     if (userIndex === -1) {
       throw new Error("Usuário não encontrado.");
